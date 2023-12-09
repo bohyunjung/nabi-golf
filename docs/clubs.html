@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Golf Club Guessing Game</title>
+    <style>
+        #game-container {
+            display: flex;
+        }
+
+        .card {
+            width: 100px;
+            height: 150px;
+            border: 1px solid black;
+            margin: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #eee;
+        }
+
+        .selected {
+            border: 2px solid green;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <h1>Golf Club Guessing Game</h1>
+    <div id="game-container"></div>
+    <button id="shuffle-button">Shuffle</button>
+    <button id="submit-button" hidden>Submit</button>
+    <script>
+        const clubs = [
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+        ];
+        let shuffledCards = [];
+        let selectedCards = [];
+        let differentCards = [];
+        let numDifferentCards = 2; // Initial number of different cards
+
+
+        function flipCards() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.classList.remove('selected');
+                if (shuffledCards.includes(clubs[index])) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            differentCards.forEach((club, index) => {
+                cards[clubs.indexOf(club)].style.display = 'flex';
+            });
+        }
+
+        function selectCard(event) {
+            const card = event.target;
+            card.classList.toggle('selected');
+            selectedCards.includes(card)
+                ? selectedCards.splice(selectedCards.indexOf(card), 1)
+                : selectedCards.push(card);
+        }
+
+
+        function createCards() {
+            const gameContainer = document.getElementById('game-container');
+            clubs.forEach((club, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.setAttribute("xx", index);
+
+                const div = document.createElement('div');
+                div.innerText = club;
+                card.appendChild(div);
+                card.addEventListener('click', selectCard);
+                gameContainer.appendChild(card);
+            });
+        }
+
+        function shuffleCards() {
+            shuffledCards = [...clubs].sort(() => Math.random() - 0.5);
+            differentCards = [];
+
+            differentIndices = shuffledCards.slice(0, numDifferentCards);
+            for (let i = 0; i < numDifferentCards; i++) {
+                // const randomIndex = Math.floor(Math.random() * shuffledCards.length);
+                // newNumber = Math.floor(Math.random() * 100 + 13);
+                newNumber = 200;
+                differentCards.push(differentIndices[i]);
+                shuffledCards[differentIndices[i]] = newNumber;
+            }
+            const gameContainer = document.getElementById('game-container');
+            gameContainer.innerHTML = null;
+            shuffledCards.forEach((club, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.setAttribute("xx", index);
+
+                const div = document.createElement('div');
+                div.innerText = club;
+                card.appendChild(div);
+                card.addEventListener('click', selectCard);
+                gameContainer.appendChild(card);
+            });
+        }
+
+        function submitGuess() {
+
+            const correct = selectedCards.length > 0 && selectedCards.every(card => differentCards.includes(Number.parseInt([card.getAttribute('xx')])));
+            if (correct) {
+                alert('Congratulations! You guessed correctly.');
+            } else {
+                alert('Sorry, your guess was incorrect.');
+            }
+            selectedCards = [];
+        }
+
+        function handleShuffleClick() {
+            // numDifferentCards = Math.floor(Math.random() * 3) + 1; // Randomly change number of different cards between 1 and 3
+            shuffleCards();
+            document.getElementById('shuffle-button').hidden = true; // Hide shuffle button after use
+            document.getElementById('submit-button').hidden = false;
+        }
+
+        createCards();
+
+        document.getElementById('shuffle-button').addEventListener('click', handleShuffleClick);
+        document.getElementById('submit-button').addEventListener('click', submitGuess);
+
+    </script>
+</body>
+
+</html>
